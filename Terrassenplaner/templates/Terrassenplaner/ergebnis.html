@@ -1,125 +1,131 @@
 {% extends 'base.html' %}
+
 {% block title_second %}
-    <h1 class="text-center mt-5">Ergebnis der Terrassenplanung</h1>
+<h1 class="text-center mt-5">Ergebnis der Terrassenplanung</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row fluid justify-content-between">
-            <div class="col">
-                <ul class="list-group">
-                    <li class="list-group-item"><strong>Länge:</strong> <br>{{ deck_laenge_mm }} mm</li>
-                    <li class="list-group-item"><strong>Breite:</strong> <br>{{ deck_breite_mm }} mm</li>
-                    <li class="list-group-item"><strong>Verlegemuster:</strong> <br>{{ verlegemuster }}</li>
-                    <li class="list-group-item"><strong>Unterkonstruktion:</strong> <br>{{ unterkonstruktion.material_name }}</li>
-                    <li class="list-group-item"><strong>Terrassenbelag:</strong> <br>{{ terrassenbelag.material_name }}</li>
-                    <li class="list-group-item"><strong>Querverbindung:</strong> <br>{{ querverbinder }}</li>
-                </ul>
-            </div>
-            <div class="col-md-auto">
-                <section>
-                    <h2>Unterkonstruktion</h2>
-                    <table class="table table-hover">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Anzahl UK</th>
-                                <th>Artikelnummer</th>
-                                <th>Material Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ ben_balken_gesamt }} Stk.</td>
-                                <td>{{ unterkonstruktion.artikelnummer }}</td>
-                                <td>{{ unterkonstruktion.material_name }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
-                <section>
-                    <h2>Terrassenbelag</h2>
-                    <table class="table table-hover">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Anzahl Dielen</th>
-                                <th>Artikelnummer</th>
-                                <th>Material Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ anzahl_dielen_stk }} Stk.</td>
-                                <td>{{ terrassenbelag.artikelnummer }}</td>
-                                <td>{{ terrassenbelag.material_name }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>       
-                <section>
-                    <h2>Montagematerial</h2>
-                    <table class="table table-hover">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Anzahl</th>
-                                <th>Artikelnummer</th>
-                                <th>Material Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if gesamt_verbinder > 0 %}
-                            {% for verbinder in verbinder %}
-                            <tr>
-                                <td>{{ gesamt_verbinder }} Stk.</td>
-                                <td>{{ verbinder.artikelnummer }}</td>
-                                <td>{{ verbinder.material_name }}</td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                
-                            {% if querstreben_gesamt > 0 %}
-                            {% for verbinder in verbinder %}
-                            <tr>
-                                <td>{{ querstreben_gesamt }} Stk.</td>
-                                <td>{{ verbinder.artikelnummer }}</td>
-                                <td>Verbinder für Querstreben</td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                
-                            {% if gesamt_schrauben > 0 %}
-                            {% for schraube in schrauben %}
-                            <tr>
-                                <td>{{ gesamt_schrauben }} Stk.</td>
-                                <td>{{ schraube.artikelnummer }}</td>
-                                <td>{{ schraube.material_name }}</td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                
-                            {% if gesamt_befestigungsclip > 0 %}
-                                {% for clip in befestigungsclips %}
-                                    <tr>
-                                        <td>{{ gesamt_befestigungsclip }} Stk.</td>
-                                        <td>{{ clip.artikelnummer }}</td>
-                                        <td>{{ clip.material_name }}</td>
-                                    </tr>
-                                {% endfor %}
-                            {% endif %}
-
-
-                            {% if bohrschrauben_gesamt > 0 %}
-                            <tr>
-                                <td>{{ bohrschrauben_gesamt }} Stk.</td>
-                                <td>{{ bohrschrauben.artikelnummer }}</td>
-                                <td>{{ bohrschrauben.material_name }}</td>
-                            </tr>
-                            {% endif %}
-
-
-                        </tbody>
-                    </table>
-                </section>                
-            </div>
-        </div>
+<div class="container">
+  <div class="row fluid justify-content-between">
+    <div class="col">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <strong>Länge:</strong> <br>{{ deck_laenge_mm }} mm
+        </li>
+        <li class="list-group-item">
+          <strong>Breite:</strong> <br>{{ deck_breite_mm }} mm
+        </li>
+        <li class="list-group-item">
+          <strong>Verlegemuster:</strong> <br>{{ verlegemuster }}
+        </li>
+        <li class="list-group-item">
+          <strong>Unterkonstruktion:</strong> <br>{{ unterkonstruktion.material_name }}
+        </li>
+        <li class="list-group-item">
+          <strong>Terrassenbelag:</strong> <br>{{ terrassenbelag.material_name }}
+        </li>
+        <li class="list-group-item">
+          <strong>Querverbindung:</strong> <br>{{ querverbinder }}
+        </li>
+      </ul>
     </div>
+    <div class="col-md-auto">
+      <section>
+        <h2>Unterkonstruktion</h2>
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>Anzahl UK</th>
+              <th>Artikelnummer</th>
+              <th>Material Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ ben_balken_gesamt }} Stk.</td>
+              <td>{{ unterkonstruktion.artikelnummer }}</td>
+              <td>{{ unterkonstruktion.material_name }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Terrassenbelag</h2>
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>Anzahl Dielen</th>
+              <th>Artikelnummer</th>
+              <th>Material Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ anzahl_dielen_stk }} Stk.</td>
+              <td>{{ terrassenbelag.artikelnummer }}</td>
+              <td>{{ terrassenbelag.material_name }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Montagematerial</h2>
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>Anzahl</th>
+              <th>Artikelnummer</th>
+              <th>Material Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if gesamt_verbinder > 0 %}
+            {% for verbinder in verbinder %}
+            <tr>
+              <td>{{ gesamt_verbinder }} Stk.</td>
+              <td>{{ verbinder.artikelnummer }}</td>
+              <td>{{ verbinder.material_name }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if querstreben_gesamt > 0 %}
+            {% for verbinder in verbinder %}
+            <tr>
+              <td>{{ querstreben_gesamt }} Stk.</td>
+              <td>{{ verbinder.artikelnummer }}</td>
+              <td>Verbinder für Querstreben</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if gesamt_schrauben > 0 %}
+            {% for schraube in schrauben %}
+            <tr>
+              <td>{{ gesamt_schrauben }} Stk.</td>
+              <td>{{ schraube.artikelnummer }}</td>
+              <td>{{ schraube.material_name }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if gesamt_befestigungsclip > 0 %}
+            {% for clip in befestigungsclips %}
+            <tr>
+              <td>{{ gesamt_befestigungsclip }} Stk.</td>
+              <td>{{ clip.artikelnummer }}</td>
+              <td>{{ clip.material_name }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if bohrschrauben_gesamt > 0 %}
+            <tr>
+              <td>{{ bohrschrauben_gesamt }} Stk.</td>
+              <td>{{ bohrschrauben.artikelnummer }}</td>
+              <td>{{ bohrschrauben.material_name }}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</div>
 {% endblock %}
