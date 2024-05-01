@@ -157,10 +157,10 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
 }
 # Django CSRF-Schutz: CSRF_TRUSTED_ORIGINS
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['planer4-e93a8s4x.b4a.run','node180a.containers.back4app.com', 'localhost', '127.0.0.1']
 
 # CORS-Konfiguration: CORS_ALLOWED_ORIGINS
-CORS_ALLOWED_ORIGINS = ['*']
+CORS_ALLOWED_ORIGINS = ['planer4-e93a8s4x.b4a.run','node180a.containers.back4app.com', 'localhost', '127.0.0.1']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
