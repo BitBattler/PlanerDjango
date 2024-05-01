@@ -6,7 +6,7 @@ from .views import terrassen_planer_view
 
 urlpatterns = [
     path('materials/', views.material_list, name='material_list'),
-    path('/', terrassen_planer_view, name='planer_view'),
+    path('', terrassen_planer_view, name='planer_view'),
     # Weitere URL-Muster
 ]
 
