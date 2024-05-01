@@ -162,4 +162,8 @@ CSRF_FAILURE_VIEW = 'Terrassenplaner.views.csrf_failure'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+    'https://planer4-e93a8s4x.b4a.run'
+]
+
+CORS_ALLOW_CREDENTIALS = True
