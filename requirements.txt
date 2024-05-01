@@ -8,6 +8,7 @@ defusedxml==0.7.1
 diff-match-patch==20230430
 Django==5.0.4
 django-bootstrap4==24.3
+django-cors-headers==4.3.1
 django-crispy-forms==2.1
 django-debug-toolbar==4.3.0
 django-import-export==3.3.8
@@ -15,6 +16,7 @@ django-widget-tweaks==1.5.0
 et-xmlfile==1.1.0
 ezdxf==1.2.0
 fonttools==4.51.0
+gunicorn==22.0.0
 idna==3.7
 kiwisolver==1.4.5
 MarkupPy==1.14

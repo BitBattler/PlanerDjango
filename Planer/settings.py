@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'crispy_forms',
     'widget_tweaks',
+    'corsheaders',
 
 ]
 
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'Planer.urls'
@@ -157,3 +159,8 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 CSRF_FAILURE_VIEW = 'Terrassenplaner.views.csrf_failure'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+CORS_ORIGIN_ALLOW_ALL = True
