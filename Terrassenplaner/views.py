@@ -192,5 +192,3 @@ def material_list(request):
     kategorien = Kategorie.objects.all().prefetch_related('materialien')
     return render(request, 'Terrassenplaner/material_list.html', {'kategorien': kategorien})
 
-def csrf_failure(request, reason=""):
-    return HttpResponseForbidden("CSRF-Prüfung fehlgeschlagen. Ihre Sitzung ist möglicherweise abgelaufen.")

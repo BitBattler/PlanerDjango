@@ -157,9 +157,3 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
 }
 
-CSRF_FAILURE_VIEW = 'Terrassenplaner.views.csrf_failure'
-
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
-CORS_ORIGIN_ALLOW_ALL = True
