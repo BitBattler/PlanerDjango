@@ -29,8 +29,8 @@ class TerrassenPlanerForm(forms.Form):
     verlegemuster = forms.ChoiceField(
         choices=[
             ('', 'Keine Auswahl'),
-            ('wilder_verband', 'Wilder Verband'),
-            ('englischer_verband', 'Englischer Verband'),
+            ('wilder_verband', 'Wild'),
+            ('englischer_verband', 'Englisch'),
         ],
         label="Verlegemuster auswählen",
         required=True
@@ -70,6 +70,7 @@ class TerrassenPlanerForm(forms.Form):
         self.fields['unterkonstruktion'].label_from_instance = self.clean_label
         self.fields['terrassenbelag'].label_from_instance = self.clean_label
         self.fields['stellfuss'].label_from_instance = self.clean_label
+        self.fields['montageauswahl'].label_from_instance = self.clean_label
         
     def clean_label(self, obj):
         label = obj.material_name  # Zugriff auf das Feld, das du säubern möchtest

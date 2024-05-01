@@ -66,39 +66,59 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% if gesamt_verbinder > 0 %}
+                            {% for verbinder in verbinder %}
                             <tr>
                                 <td>{{ gesamt_verbinder }} Stk.</td>
                                 <td>{{ verbinder.artikelnummer }}</td>
-                                <td>{{ verbinder.material_name }} für Längsverbindung</td>
+                                <td>{{ verbinder.material_name }}</td>
                             </tr>
+                            {% endfor %}
+                            {% endif %}
+                
+                            {% if querstreben_gesamt > 0 %}
+                            {% for verbinder in verbinder %}
                             <tr>
                                 <td>{{ querstreben_gesamt }} Stk.</td>
                                 <td>{{ verbinder.artikelnummer }}</td>
                                 <td>Verbinder für Querstreben</td>
                             </tr>
+                            {% endfor %}
+                            {% endif %}
+                
                             {% if gesamt_schrauben > 0 %}
+                            {% for schraube in schrauben %}
                             <tr>
                                 <td>{{ gesamt_schrauben }} Stk.</td>
-                                <td>{{ schrauben.artikelnummer }}</td>
-                                <td>{{ schrauben.material_name }}</td>
+                                <td>{{ schraube.artikelnummer }}</td>
+                                <td>{{ schraube.material_name }}</td>
                             </tr>
+                            {% endfor %}
+                            {% endif %}
+                
+                            {% if gesamt_befestigungsclip > 0 %}
+                                {% for clip in befestigungsclips %}
+                                    <tr>
+                                        <td>{{ gesamt_befestigungsclip }} Stk.</td>
+                                        <td>{{ clip.artikelnummer }}</td>
+                                        <td>{{ clip.material_name }}</td>
+                                    </tr>
+                                {% endfor %}
                             {% endif %}
 
-                            {% if gesamt_befestigungsclip > 0 %}
-                            <tr>
-                                <td>{{ gesamt_befestigungsclip }} Stk.</td>
-                                <td>{{ befestigungsclip.artikelnummer }}</td>
-                                <td>{{ befestigungsclip.material_name }}</td>
-                            </tr>
-                            {% endif %}
+
+                            {% if bohrschrauben_gesamt > 0 %}
                             <tr>
                                 <td>{{ bohrschrauben_gesamt }} Stk.</td>
                                 <td>{{ bohrschrauben.artikelnummer }}</td>
                                 <td>{{ bohrschrauben.material_name }}</td>
                             </tr>
+                            {% endif %}
+
+
                         </tbody>
                     </table>
-                </section>
+                </section>                
             </div>
         </div>
     </div>

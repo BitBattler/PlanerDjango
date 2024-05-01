@@ -129,11 +129,11 @@ def terrassen_planer_view(request):
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
                     gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
-                    print("Befestigungsclip gesamt:", gesamt_befestigungsclip)
+                    #print("Befestigungsclip gesamt:", gesamt_befestigungsclip)
                 else:
                     gesamt_befestigungsclip = 0
                     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
-                    print("Schrauben gesamt:", gesamt_schrauben) 
+                    #print("Schrauben gesamt:", gesamt_schrauben) 
                     
                 # Querverbinder If Abfrage
                 if querverbinder == 'ja':
@@ -144,11 +144,14 @@ def terrassen_planer_view(request):
                     querstreben_einzel = 0 
                     bohrschrauben_gesamt = 0
 
-            verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='verbinder').first()
-            schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='A2').first()
+            verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
+            schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
             bohrschrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben').first()
-            befestigunsclip = Material.objects.filter(material_kategorie__name='Befestigungsclip', material_name__icontains='Befestigungsclip').first()
+            befestigungsclips = Material.objects.filter(material_kategorie__name='Clips', material_name__icontains='Befestigungsclip')
+            print("Anzahl der Befestigungsclips:", befestigungsclips.count())
+            print("Inhalt von befestigungsclips:", befestigungsclips)
 
+            
             context = {
                 
                 'form': form,
@@ -169,8 +172,9 @@ def terrassen_planer_view(request):
                 'bohrschrauben': bohrschrauben,
                 'bohrschrauben_gesamt': bohrschrauben_gesamt,
                 'gesamt_schrauben': gesamt_schrauben,
-                'befestigungsclip': befestigungsclip,
-                'gesamt_befestigungsclip': gesamt_befestigungsclip,  
+                'montageauswahl': montageauswahl,
+                'befestigungsclips': befestigungsclips,
+                'gesamt_befestigungsclip': gesamt_befestigungsclip, 
                               
                 # Verbinder
                 'verbinder': verbinder,
@@ -181,7 +185,6 @@ def terrassen_planer_view(request):
                 'querstreben_einzel': querstreben_einzel,
                 'querstreben_gesamt': querstreben_gesamt
             }
-            print("Befestigungsclip gesamt:", gesamt_befestigungsclip)
             return render(request, 'Terrassenplaner/ergebnis.html', context)
     else:
         form = TerrassenPlanerForm()
