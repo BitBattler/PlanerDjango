@@ -17,7 +17,7 @@ COPY . .
 EXPOSE 8000
 
 # Definiere die Umgebungsvariablen (falls nötig)
-ENV mmeuw
+
 
 # Führe die Anwendung aus
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
