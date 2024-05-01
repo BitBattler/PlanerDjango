@@ -2,7 +2,7 @@
 FROM python:3.11.2
 
 # Setze das Arbeitsverzeichnis im Container
-WORKDIR /Planer
+WORKDIR /PlanerDjango
 
 # Kopiere die lokalen Konfigurationsdateien in das Container
 COPY requirements.txt ./
