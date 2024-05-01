@@ -30,7 +30,7 @@ MEDIA_URL = '/Planer/media/'
 SECRET_KEY = 'django-insecure-t8pc16-t!zterq7qozjbjrv&wjh7lz=%9w@7bcz26#_^n8jty0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['planer4-e93a8s4x.b4a.run', 'localhost', '127.0.0.1']
 
@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de-de'
 
 TIME_ZONE = 'UTC'
 
