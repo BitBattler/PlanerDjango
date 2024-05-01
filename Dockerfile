@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # Setze das Arbeitsverzeichnis im Container
-WORKDIR /Terrassenplaner
+WORKDIR /Planer
 
 # Kopiere die lokalen Konfigurationsdateien in das Container
 COPY requirements.txt ./
@@ -17,7 +17,7 @@ COPY . .
 EXPOSE 8000
 
 # Definiere die Umgebungsvariablen (falls nötig)
-ENV NAME World
+ENV mmeuw
 
 # Führe die Anwendung aus
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
