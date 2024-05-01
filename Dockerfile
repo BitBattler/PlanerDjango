@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # Setze das Arbeitsverzeichnis im Container
-WORKDIR /Planer
+WORKDIR /Terrassenplaner
 
 # Kopiere die lokalen Konfigurationsdateien in das Container
 COPY requirements.txt ./
