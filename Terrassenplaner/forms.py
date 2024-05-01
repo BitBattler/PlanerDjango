@@ -19,7 +19,7 @@ class TerrassenPlanerForm(forms.Form):
     
     montageauswahl = forms.ChoiceField(
         choices=[
-            ('clips', 'Befestigungsclips'),
+            ('clips', 'Clips'),
             ('schrauben', 'Schrauben')
         ],
         label="Montageauswahl",

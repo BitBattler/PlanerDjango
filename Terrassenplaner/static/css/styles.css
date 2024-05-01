@@ -1,3 +1,8 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 /* Haupt-Header-Styling */
 .custom-header {
     display: flex;
@@ -13,17 +18,19 @@
 
 /* Stil für den Container */
 .container_body {
-    width: 100vw;
-    padding: 0 20px;
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     margin-top: 50px;
     justify-content: space-between;
 }
 .container {
-    width: 100vw;
+    width: 100%;
     padding: 0 20px;
     display: flex;
+}
+
+.space{
+    height: 20px;
 }
 
 /* Titel im Header */
