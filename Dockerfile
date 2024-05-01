@@ -1,5 +1,5 @@
 # Verwende ein offizielles Python Runtime als Eltern-Image
-FROM python:3.9-slim
+FROM python:3.11.2
 
 # Setze das Arbeitsverzeichnis im Container
 WORKDIR /Planer
