@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %} 
+{% load crispy_forms_tags %}
+
+{% block title_first %}
+    <h1 class="text-center mt-5">Terrassenplaner - Thüring AG</h1>
+{% endblock %}
+
+{% block content %} 
+    <div class="container mt-5">
+        <img src="https://www.viplounge.ch/media/image/d8/9e/e8/terrassengestaltung-grosse-terrasse.jpg" class="img-thumbnail" alt="...">
+    </div>       
+    <form method="post" class="container mt-5">
+        {% csrf_token %}
+        <div class="card shadow border-0 rounded">
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.deck_laenge.id_for_label }}">Länge (in mm)</label>
+                        {{ form.deck_laenge|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.deck_breite.id_for_label }}">Breite (in mm)</label>
+                        {{ form.deck_breite|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.verlegemuster.id_for_label }}">Verlegemuster</label>
+                        {{ form.verlegemuster|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.montageauswahl.id_for_label }}">Verschraubung</label>
+                        {{ form.montageauswahl|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.querverbinder.id_for_label }}">Querverbinder</label>
+                        {{ form.querverbinder|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.stellfuss.id_for_label }}">Stellfuß hinzufügen?</label>
+                        {{ form.stellfuss|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.unterkonstruktion.id_for_label }}">Unterkonstruktion auswählen</label>
+                        {{ form.unterkonstruktion|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="{{ form.terrassenbelag.id_for_label }}">Terrassenbelag auswählen</label>
+                        {{ form.terrassenbelag|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-outline-success btn-block">Berechnen</button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

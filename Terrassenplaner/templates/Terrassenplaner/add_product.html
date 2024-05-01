@@ -1,0 +1,16 @@
+<!-- Terrassenplaner/templates/Terrassenplaner/add_product.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Produkt hinzufügen</title>
+</head>
+<body>
+    <h1>Neues Produkt hinzufügen</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Speichern</button>
+    </form>
+</body>
+</html>

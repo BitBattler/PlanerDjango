@@ -1,0 +1,33 @@
+.
+├── db.sqlite3
+├── manage.py
+├── output.txt
+├── Planer
+│   ├── asgi.py
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-311.pyc
+│   │   ├── settings.cpython-311.pyc
+│   │   ├── urls.cpython-311.pyc
+│   │   └── wsgi.cpython-311.pyc
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+└── Terrassenplaner
+    ├── admin.py
+    ├── apps.py
+    ├── __init__.py
+    ├── migrations
+    │   ├── __init__.py
+    │   └── __pycache__
+    │       └── __init__.cpython-311.pyc
+    ├── models.py
+    ├── __pycache__
+    │   ├── admin.cpython-311.pyc
+    │   ├── apps.cpython-311.pyc
+    │   ├── __init__.cpython-311.pyc
+    │   └── models.cpython-311.pyc
+    ├── tests.py
+    └── views.py
+
+7 directories, 24 files

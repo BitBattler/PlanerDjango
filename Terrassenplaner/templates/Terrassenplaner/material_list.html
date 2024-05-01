@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title_third %}
+<h1 class="text-center mt-5">Materialliste</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <table class="table table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>Kategorie</th>
+                <th>Material Name</th>
+                <th>Artikelnummer</th>
+                <th>Länge (mm)</th>
+                <th>Breite (mm)</th>
+                <th>Höhe (mm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kategorie in kategorien %}
+                <!-- Kategorie Überschrift -->
+                <tr class="table-secondary">
+                    <th colspan="6">{{ kategorie.name }}</th>
+                </tr>
+                {% for material in kategorie.materialien.all %}
+                    <tr>
+                        <td></td> <!-- Leere Zelle für die Kategorieüberschrift -->
+                        <td>{{ material.material_name }}</td>
+                        <td>{{ material.artikelnummer }}</td>
+                        <td>{{ material.material_laenge|mul:1000|floatformat:"0" }}</td>
+                        <td>{{ material.material_breite|mul:1000|floatformat:"0" }}</td>
+                        <td>{{ material.material_hoehe|mul:1000|floatformat:"0" }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
