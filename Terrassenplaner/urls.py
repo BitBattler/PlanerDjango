@@ -5,8 +5,10 @@ from . import views
 from .views import terrassen_planer_view
 
 urlpatterns = [
-    path('materials/', views.material_list, name='material_list'),
+    
     path('', terrassen_planer_view, name='planer_view'),
+    path('materials/', views.material_list, name='material_list'),
+    path('import/', views.add_xls, name='add_xls'),
     # Weitere URL-Muster
 ]
 

@@ -1,9 +1,15 @@
+from django.conf import settings
 from django.db.models import DecimalField, ExpressionWrapper, F
 from django.shortcuts import render
-from .forms import TerrassenPlanerForm
+from .forms import TerrassenPlanerForm, UploadXLSForm
 from .models import Material, Kategorie
 from math import ceil
 from decimal import Decimal
+import pandas as pd
+import io
+import os
+import xlsxwriter
+from django.http import HttpResponse
 
 # Wilder Verband
 def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
@@ -189,6 +195,91 @@ def terrassen_planer_view(request):
     else:
         form = TerrassenPlanerForm()
     return render(request, 'Terrassenplaner/planer_form.html', {'form': form})
+
+def add_xls(request):
+    if request.method == 'POST':
+        form = UploadXLSForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Hochgeladene Datei laden
+            xls_file = request.FILES['xls_file']
+            df_uploaded = pd.read_excel(xls_file)
+            
+            # Liste der auszuschließenden Begriffe
+            exclude_terms = [
+                'Diversartikel', 
+                'megawood', 
+                'Pfostenanker', 
+                'Osmo', 
+                'Element',
+                'öle',
+                'Entgrauer',
+                'Pfähle',
+                'Palisaden',
+                'Latten',
+                'Schwellen',
+                'bretter',
+                'Zaun',
+                'Stämme',
+                'Muster',
+                'Fun-Deck',
+                'Stirn',
+                'Montage',
+                'Bangkirai',
+                'Fibertex',
+                'Bohrer',
+                'Kombi',
+                ]
+
+            # Filtern der Zeilen in verschiedenen Spalten basierend auf Ausschlussbegriffen
+            for term in exclude_terms:
+                df_uploaded = df_uploaded[~df_uploaded['Beschreibung'].str.contains(term, case=False, na=False)]
+                df_uploaded = df_uploaded[~df_uploaded['Beschreibung 2'].str.contains(term, case=False, na=False)]
+
+            # Masken-Datei (Vorlagendatei) laden
+            mask_path = os.path.join(settings.STATIC_ROOT, 'Mask_Material.xlsx')
+            df_mask = pd.read_excel(mask_path)
+
+            # Spaltenzuordnung gemäß der Vorlagendatei
+            column_mapping = {
+                'Nr.': 'artikelnummer',
+                'Beschreibung 2': 'material_name',
+                'Länge (Basis)': 'material_laenge',
+                'Breite (Basis)': 'material_breite',
+                'Stärke (Basis)': 'material_hoehe',
+                'Menge pro Paket': 'verpackungseinheit',
+            }
+
+            # Kopieren der Werte aus der hochgeladenen Datei entsprechend des Mappings
+            for original_col, new_col in column_mapping.items():
+                if original_col in df_uploaded.columns and new_col in df_mask.columns:
+                    df_mask[new_col] = df_uploaded[original_col]
+
+            # Initialisieren der Kategorie-Spalte mit einem Standardwert (z.B. 0)
+            df_mask['material_kategorie'] = 0
+
+            # Kategorien (zur Referenz im Kommentar):
+            # 1: ['Unterkonstruktion', 'Untergrund'],
+            # 2: ['Belag', 'Platten'],
+            # 3: ['Zubehör', 'Extras'],
+            # 4: ['Schraube', 'Nägel'],
+            # 5: ['Clip', 'Halterung'],
+            # 6: ['Stellfuss', 'Verstellfuß']
+
+            # Erstellen der herunterladbaren Datei
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df_mask.to_excel(writer, index=False)
+
+            output.seek(0)
+
+            # Erstellen der HttpResponse für die herunterladbare Datei
+            response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=converted.xlsx'
+            return response
+
+    else:
+        form = UploadXLSForm()
+    return render(request, 'Terrassenplaner/add_xls.html', {'form': form})
 
 # Material Liste
 def material_list(request):

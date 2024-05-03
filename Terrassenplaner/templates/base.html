@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="de">
   <head>
@@ -14,12 +13,28 @@
   <body>
     <header class="custom-header">
       <h1 class="header-title">
-        {% block title_first %}{% endblock %} {% block title_second %}
-        {%endblock %} {% block title_third %}{% endblock %}
+        
+        {% block title_first %}
+        {% endblock %} 
+        
+        {% block title_second %}
+        {%endblock %} 
+        
+        {% block title_third %}
+        {% endblock %}
+        
+        {% block title_four %} 
+        {% endblock %}
       </h1>
     </header>
-    <div class="container_body">{% block content %}{% endblock %}</div>
+    
+    <div class="container_body">
+      {% block content %}
+      {% endblock %}
+    </div>
+
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+    {% endblock %}
   </body>
 </html>

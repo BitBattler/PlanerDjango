@@ -76,3 +76,8 @@ class TerrassenPlanerForm(forms.Form):
         label = obj.material_name  # Zugriff auf das Feld, das du säubern möchtest
         cleaned_label = re.sub(r'[^\w\s-]', '-', label)
         return cleaned_label
+
+class UploadXLSForm(forms.Form):
+    xls_file = forms.FileField(label='XLS File')
+    
+    
