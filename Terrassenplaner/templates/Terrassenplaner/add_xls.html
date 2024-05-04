@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="container mt-5">
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" action="{% url 'add_xls' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="card shadow border-0 rounded">
       <div class="card-body">

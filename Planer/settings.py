@@ -164,3 +164,5 @@ CORS_ALLOWED_ORIGINS = ['http://127.0.0.1', 'http://localhost', 'http://node84a.
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+CUSTOM_TEMP_DIR = os.path.join(BASE_DIR, 'tmp')

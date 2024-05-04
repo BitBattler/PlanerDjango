@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title_third %}
+<h1 class="text-center mt-5">Kategorieliste - Thüring AG</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <form method="post" enctype="multipart/form-data" action="{% url 'finalize_xls' %}">
+        {% csrf_token %}
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Kategorie</th>
+                    <th>Material Name</th>
+                    <th>Artikelnummer</th>
+                    <th>Länge (mm)</th>
+                    <th>Breite (mm)</th>
+                    <th>Höhe (mm)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                    <tr>
+                        <td>
+                            <select name="category_{{ forloop.counter }}">
+                                <option value="1">Unterkonstruktion</option>
+                                <option value="2">Terrassenbelag</option>
+                                <option value="3">Zubehör</option>
+                                <option value="4">Schrauben</option>
+                                <option value="5">Clips</option>
+                                <option value="6">Stellfuß</option>
+                            </select>
+                        </td>
+                        <td>{{ article.material_name }}</td>
+                        <td>{{ article.artikelnummer }}</td>
+                        <td>{{ article.material_laenge|mul:1000|floatformat:"0" }}</td>
+                        <td>{{ article.material_breite|mul:1000|floatformat:"0" }}</td>
+                        <td>{{ article.material_hoehe|mul:1000|floatformat:"0" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Kategorien speichern und Download</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

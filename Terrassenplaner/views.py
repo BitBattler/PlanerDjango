@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db.models import DecimalField, ExpressionWrapper, F
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import TerrassenPlanerForm, UploadXLSForm
 from .models import Material, Kategorie
 from math import ceil
@@ -9,14 +9,15 @@ import pandas as pd
 import io
 import os
 import xlsxwriter
+import tempfile
 from django.http import HttpResponse
 
 # Wilder Verband
 def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
     
     # Berechnungen für die Unterkonstruktion für Wilden Verband
-    balkenlaenge = Decimal(unterkonstruktion.material_laenge)
-    balken_abstand = Decimal('0.4')
+    balkenlaenge = unterkonstruktion.material_laenge
+    balken_abstand = Decimal('0.4')  # in Meter
     gesamt_balken = ceil(deck_breite / balken_abstand) + 2 
     gesamt_lfm = gesamt_balken * deck_laenge
     ben_balken_gesamt = ceil(gesamt_lfm / balkenlaenge)
@@ -26,22 +27,21 @@ def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unt
     verbinder_pro_reihe = balken_pro_reihe - 1 if balken_pro_reihe > 1 else 0
     gesamt_verbinder = verbinder_pro_reihe * gesamt_balken
 
-    terrassenbelag_breite = Decimal(terrassenbelag.material_breite) + Decimal('0.007') #Fugenabstand Clip 7mm
+    terrassenbelag_breite = terrassenbelag.material_breite + Decimal('0.007') # Fugenabstand Clip 7mm
     anzahl_dielen_breite = (deck_breite / terrassenbelag_breite)
     anzahl_dielen_lfm = anzahl_dielen_breite * deck_laenge
-    anzahl_dielen_stk = ceil(anzahl_dielen_lfm / Decimal(terrassenbelag.material_laenge))
+    anzahl_dielen_stk = ceil(anzahl_dielen_lfm / terrassenbelag.material_laenge)
     gesamt_schrauben = 0
     gesamt_befestigungsclip = 0
     
-
     return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
 
 # Englischer Verband
 def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
     
     # Berechnungen für die Unterkonstruktion
-    balkenlaenge = Decimal(unterkonstruktion.material_laenge)
-    balken_abstand = Decimal('0.4')
+    balkenlaenge = unterkonstruktion.material_laenge
+    balken_abstand = Decimal('0.4')  # in Meter
     gesamt_balken = ceil(deck_breite / balken_abstand) + 2 
     gesamt_lfm = gesamt_balken * deck_laenge
     ben_balken_gesamt = ceil(gesamt_lfm / balkenlaenge)
@@ -53,10 +53,10 @@ def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite,
     verbinder_pro_reihe = balken_pro_reihe - 1 if balken_pro_reihe > 1 else 0
     gesamt_verbinder = verbinder_pro_reihe * gesamt_balken
 
-    terrassenbelag_breite = Decimal(terrassenbelag.material_breite) + Decimal('0.007') #Fugenabstand Clip 7mm
+    terrassenbelag_breite = terrassenbelag.material_breite + Decimal('0.007') # Fugenabstand Clip 7mm
     anzahl_dielen_breite = (deck_breite / terrassenbelag_breite)
     anzahl_dielen_lfm = anzahl_dielen_breite * deck_laenge
-    anzahl_dielen_stk = ceil(anzahl_dielen_lfm / Decimal(terrassenbelag.material_laenge))
+    anzahl_dielen_stk = ceil(anzahl_dielen_lfm / terrassenbelag.material_laenge)
     
     # Mehr Material hinzufügen (10-15%) für Englisch Verband
     ben_balken_gesamt = ceil(ben_balken_gesamt * Decimal('1.15'))  # 15% mehr Balken für Englisch
@@ -71,7 +71,6 @@ def calculate_querverbinder(deck_laenge, ben_balken_gesamt):
     querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
     querstreben_gesamt = round(querstreben_einzel)
     
-    #print("Querstreben gesamt:", querstreben_gesamt)
     return querstreben_gesamt
     
 # Bohrschrauben
@@ -83,7 +82,6 @@ def calculate_bohrschrauben(deck_laenge, ben_balken_gesamt):
     
     bohrschrauben_gesamt = ceil(querstreben_einzel / 2)
     
-    #print("Bohrschrauben gesamt:", bohrschrauben_gesamt)
     return bohrschrauben_gesamt
 
 # Terrassen Planer View
@@ -91,17 +89,19 @@ def terrassen_planer_view(request):
     if request.method == 'POST':
         form = TerrassenPlanerForm(request.POST)
         if form.is_valid():
-            deck_laenge = form.cleaned_data['deck_laenge'] / Decimal('1000')  # Konvertiere in Meter
-            deck_breite = form.cleaned_data['deck_breite'] / Decimal('1000')  # Konvertiere in Meter
             deck_laenge_mm = form.cleaned_data['deck_laenge']  # Angenommen, die Eingabe ist bereits in Millimeter
             deck_breite_mm = form.cleaned_data['deck_breite']  # Angenommen, die Eingabe ist bereits in Millimeter
+            
+            deck_laenge = deck_laenge_mm / Decimal('1000')  # Konvertiere in Meter
+            deck_breite = deck_breite_mm / Decimal('1000')  # Konvertiere in Meter
+            
             unterkonstruktion = form.cleaned_data['unterkonstruktion']
             terrassenbelag = form.cleaned_data['terrassenbelag']
             
-
             verlegemuster = form.cleaned_data['verlegemuster']
             querverbinder = form.cleaned_data['querverbinder']
             montageauswahl = form.cleaned_data['montageauswahl']
+            
             querstreben_einzel = 0
             querstreben_gesamt = 0  
             bohrschrauben_gesamt = 0 
@@ -114,11 +114,9 @@ def terrassen_planer_view(request):
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
                     gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
-                    #print("Befestigungsclip gesamt:", gesamt_befestigungsclip)
                 else:
                     gesamt_befestigungsclip = 0
                     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
-                    #print("Schrauben gesamt:", gesamt_schrauben)  
                     
                 # Querverbinder If Abfrage
                 if querverbinder == 'ja':
@@ -135,11 +133,9 @@ def terrassen_planer_view(request):
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
                     gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
-                    #print("Befestigungsclip gesamt:", gesamt_befestigungsclip)
                 else:
                     gesamt_befestigungsclip = 0
                     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
-                    #print("Schrauben gesamt:", gesamt_schrauben) 
                     
                 # Querverbinder If Abfrage
                 if querverbinder == 'ja':
@@ -154,26 +150,16 @@ def terrassen_planer_view(request):
             schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
             bohrschrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben').first()
             befestigungsclips = Material.objects.filter(material_kategorie__name='Clips', material_name__icontains='Befestigungsclip')
-            print("Anzahl der Befestigungsclips:", befestigungsclips.count())
-            print("Inhalt von befestigungsclips:", befestigungsclips)
 
-            
             context = {
-                
                 'form': form,
-                
-                # Deck Variabeln
                 'deck_laenge_mm': deck_laenge_mm,
                 'deck_breite_mm': deck_breite_mm,
                 'verlegemuster': verlegemuster,
-                
-                # Deckberechnung
                 'ben_balken_gesamt': ben_balken_gesamt,
                 'unterkonstruktion': unterkonstruktion,
                 'terrassenbelag': terrassenbelag,
                 'anzahl_dielen_stk': anzahl_dielen_stk,
-                
-                # Befestigung 
                 'schrauben': schrauben,
                 'bohrschrauben': bohrschrauben,
                 'bohrschrauben_gesamt': bohrschrauben_gesamt,
@@ -181,12 +167,8 @@ def terrassen_planer_view(request):
                 'montageauswahl': montageauswahl,
                 'befestigungsclips': befestigungsclips,
                 'gesamt_befestigungsclip': gesamt_befestigungsclip, 
-                              
-                # Verbinder
                 'verbinder': verbinder,
                 'gesamt_verbinder': gesamt_verbinder,
-                
-                # Querstreben
                 'querverbinder': querverbinder,
                 'querstreben_einzel': querstreben_einzel,
                 'querstreben_gesamt': querstreben_gesamt
@@ -196,50 +178,29 @@ def terrassen_planer_view(request):
         form = TerrassenPlanerForm()
     return render(request, 'Terrassenplaner/planer_form.html', {'form': form})
 
+
 def add_xls(request):
     if request.method == 'POST':
         form = UploadXLSForm(request.POST, request.FILES)
         if form.is_valid():
-            # Hochgeladene Datei laden
             xls_file = request.FILES['xls_file']
             df_uploaded = pd.read_excel(xls_file)
-            
-            # Liste der auszuschließenden Begriffe
-            exclude_terms = [
-                'Diversartikel', 
-                'megawood', 
-                'Pfostenanker', 
-                'Osmo', 
-                'Element',
-                'öle',
-                'Entgrauer',
-                'Pfähle',
-                'Palisaden',
-                'Latten',
-                'Schwellen',
-                'bretter',
-                'Zaun',
-                'Stämme',
-                'Muster',
-                'Fun-Deck',
-                'Stirn',
-                'Montage',
-                'Bangkirai',
-                'Fibertex',
-                'Bohrer',
-                'Kombi',
-                ]
 
-            # Filtern der Zeilen in verschiedenen Spalten basierend auf Ausschlussbegriffen
+            exclude_terms = [
+                'Diversartikel', 'megawood', 'Pfostenanker', 'Osmo', 'Element', 'öle', 
+                'Entgrauer', 'Pfähle', 'Palisaden', 'Latten', 'Schwellen', 'bretter', 
+                'Zaun', 'Stämme', 'Muster', 'Fun-Deck', 'Stirn', 'Montage', 'Bangkirai', 
+                'Fibertex', 'Bohrer', 'Kombi'
+            ]
+
+            # Entfernen von Zeilen, die die unerwünschten Begriffe in den Spalten 'Beschreibung' und 'Beschreibung 2' enthalten
             for term in exclude_terms:
                 df_uploaded = df_uploaded[~df_uploaded['Beschreibung'].str.contains(term, case=False, na=False)]
                 df_uploaded = df_uploaded[~df_uploaded['Beschreibung 2'].str.contains(term, case=False, na=False)]
 
-            # Masken-Datei (Vorlagendatei) laden
             mask_path = os.path.join(settings.STATIC_ROOT, 'Mask_Material.xlsx')
             df_mask = pd.read_excel(mask_path)
 
-            # Spaltenzuordnung gemäß der Vorlagendatei
             column_mapping = {
                 'Nr.': 'artikelnummer',
                 'Beschreibung 2': 'material_name',
@@ -249,38 +210,72 @@ def add_xls(request):
                 'Menge pro Paket': 'verpackungseinheit',
             }
 
-            # Kopieren der Werte aus der hochgeladenen Datei entsprechend des Mappings
-            for original_col, new_col in column_mapping.items():
-                if original_col in df_uploaded.columns and new_col in df_mask.columns:
-                    df_mask[new_col] = df_uploaded[original_col]
+            # Umbenennen und Reihenfolge der Spalten entsprechend der Maskendatei
+            df_uploaded = df_uploaded.rename(columns=column_mapping)
 
-            # Initialisieren der Kategorie-Spalte mit einem Standardwert (z.B. 0)
-            df_mask['material_kategorie'] = 0
+            # Überprüfen, ob die benötigten Spalten im DataFrame vorhanden sind
+            required_columns = ['artikelnummer', 'material_name', 'material_laenge', 'material_breite', 'material_hoehe', 'verpackungseinheit']
+            if not all(col in df_uploaded.columns for col in required_columns):
+                return HttpResponse("Fehler: Nicht alle benötigten Spalten sind im hochgeladenen Excel vorhanden.")
 
-            # Kategorien (zur Referenz im Kommentar):
-            # 1: ['Unterkonstruktion', 'Untergrund'],
-            # 2: ['Belag', 'Platten'],
-            # 3: ['Zubehör', 'Extras'],
-            # 4: ['Schraube', 'Nägel'],
-            # 5: ['Clip', 'Halterung'],
-            # 6: ['Stellfuss', 'Verstellfuß']
+            # Auswahl und Reihenfolge der Spalten basierend auf der Maskendatei
+            df_uploaded = df_uploaded[required_columns]
 
-            # Erstellen der herunterladbaren Datei
-            output = io.BytesIO()
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df_mask.to_excel(writer, index=False)
+            temp_dir = settings.CUSTOM_TEMP_DIR
+            if not os.path.exists(temp_dir):
+                os.makedirs(temp_dir)
 
-            output.seek(0)
+            temp_file_path = os.path.join(temp_dir, 'temp_converted.xlsx')
+            df_uploaded.to_excel(temp_file_path, index=False)
 
-            # Erstellen der HttpResponse für die herunterladbare Datei
-            response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=converted.xlsx'
-            return response
+            request.session['temp_file_path'] = temp_file_path
+            
+            return render(request, 'Terrassenplaner/categorize_xls.html', {
+                'articles': df_uploaded.to_dict('records')
+            })
 
     else:
         form = UploadXLSForm()
     return render(request, 'Terrassenplaner/add_xls.html', {'form': form})
 
+def finalize_xls(request):
+    if request.method == 'POST':
+        temp_dir = settings.CUSTOM_TEMP_DIR
+        temp_file_path = os.path.join(temp_dir, 'temp_converted.xlsx')
+        
+        if not os.path.exists(temp_file_path):
+            return HttpResponse("Fehler: Temporäre Datei nicht gefunden.", status=404)
+
+        # Kategorien aus dem Formular aktualisieren
+        df = pd.read_excel(temp_file_path)
+        for key, value in request.POST.items():
+            if key.startswith('category_'):
+                index = int(key.split('_')[-1]) - 1  # Konvertieren 'category_1' zu 0 (Index)
+                # Annahme: Ihre Excel-Datei hat eine Spalte 'Kategorie'
+                df.at[index, 'material_kategorie'] = value
+
+        # Speichern der aktualisierten Excel-Datei in einem BytesIO-Stream
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False)
+        output.seek(0)
+
+        # Setzen des Dateinamens und des Content-Types für den Download
+        response = HttpResponse(
+            output, 
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename="updated_file.xlsx"'
+
+        # Aufräumen: Löschen der temporären Datei
+        os.remove(temp_file_path)
+
+        return response
+    else:
+        # Wenn keine POST-Anfrage, umleiten zum Formular
+        return redirect('planer_view')
+
+    
 # Material Liste
 def material_list(request):
     kategorien = Kategorie.objects.all().prefetch_related('materialien')

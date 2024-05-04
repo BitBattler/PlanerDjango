@@ -9,7 +9,7 @@ urlpatterns = [
     path('', terrassen_planer_view, name='planer_view'),
     path('materials/', views.material_list, name='material_list'),
     path('import/', views.add_xls, name='add_xls'),
-    # Weitere URL-Muster
+    path('categorize/', views.finalize_xls, name='finalize_xls'),
 ]
 
 # Debug-Toolbar-Konfiguration
