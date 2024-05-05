@@ -1,15 +1,17 @@
-from django.conf import settings
-from django.db.models import DecimalField, ExpressionWrapper, F
-from django.shortcuts import render, redirect
-from .forms import TerrassenPlanerForm, UploadXLSForm
-from .models import Material, Kategorie
-from math import ceil
-from decimal import Decimal
-import pandas as pd
 import io
 import os
 import xlsxwriter
 import tempfile
+import pandas as pd
+from django.contrib.auth import authenticate, login, logout
+from django.conf import settings
+from django.db.models import DecimalField, ExpressionWrapper, F
+from django.shortcuts import render, redirect
+from .forms import TerrassenPlanerForm, UploadXLSForm, LoginForm
+from .models import Material, Kategorie
+from math import ceil
+from decimal import Decimal
+from django.contrib import messages
 from django.http import HttpResponse
 
 # Wilder Verband
@@ -178,7 +180,7 @@ def terrassen_planer_view(request):
         form = TerrassenPlanerForm()
     return render(request, 'Terrassenplaner/planer_form.html', {'form': form})
 
-
+# xlsx Converter
 def add_xls(request):
     if request.method == 'POST':
         form = UploadXLSForm(request.POST, request.FILES)
@@ -238,6 +240,7 @@ def add_xls(request):
         form = UploadXLSForm()
     return render(request, 'Terrassenplaner/add_xls.html', {'form': form})
 
+#xlsx downloader 
 def finalize_xls(request):
     if request.method == 'POST':
         temp_dir = settings.CUSTOM_TEMP_DIR
@@ -273,11 +276,38 @@ def finalize_xls(request):
         return response
     else:
         # Wenn keine POST-Anfrage, umleiten zum Formular
-        return redirect('planer_view')
+        return redirect('planer_view')    
 
-    
 # Material Liste
 def material_list(request):
     kategorien = Kategorie.objects.all().prefetch_related('materialien')
     return render(request, 'Terrassenplaner/material_list.html', {'kategorien': kategorien})
 
+def login_user(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                messages.success(request, "Du bist angemeldet.")
+                # Redirect to add_xls view upon successful login
+                return redirect('add_xls')
+            else:
+                messages.error(request, "Fehler bei der Anmeldung. Versuche es erneut.")
+                # Render login page with error message
+                return render(request, 'login', {"form": form})
+        else:
+            messages.error(request, "Fehler die Seite ist nicht verfügbar.")
+            return render(request, 'Terrassenplaner/planer_form.html', {})
+    
+    else:
+        # Render login page for GET request
+        return render(request, 'Terrassenplaner/login.html', {})
+#Logout
+def logout_user(request):
+    logout(request)
+    return redirect('planer_view')

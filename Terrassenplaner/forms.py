@@ -2,7 +2,6 @@ from django import forms
 from .models import Material
 import re
 
-# Planer Formular
 class TerrassenPlanerForm(forms.Form):
     
     deck_laenge = forms.DecimalField(
@@ -79,5 +78,8 @@ class TerrassenPlanerForm(forms.Form):
 
 class UploadXLSForm(forms.Form):
     xls_file = forms.FileField(label='XLS File')
-    
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=65)
+    password = forms.CharField(max_length=65, widget=forms.PasswordInput)
     
