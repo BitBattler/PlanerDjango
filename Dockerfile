@@ -5,7 +5,7 @@ FROM python:3.11.2
 WORKDIR /PlanerDjango
 
 # Kopiere die lokalen Konfigurationsdateien in das Container
-COPY requirements.txt ./
+COPY requirements.txt requirements.txt
 
 # Installiere alle benötigten Pakete
 RUN pip install --no-cache-dir -r requirements.txt
