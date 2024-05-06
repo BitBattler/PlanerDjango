@@ -13,6 +13,7 @@ django-crispy-forms==2.1
 django-debug-toolbar==4.3.0
 django-import-export==3.3.8
 django-widget-tweaks==1.5.0
+docker==7.0.0
 et-xmlfile==1.1.0
 ezdxf==1.2.0
 fonttools==4.51.0
