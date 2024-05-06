@@ -295,7 +295,7 @@ def login_user(request):
                 login(request, user)
                 messages.success(request, "Du bist angemeldet.")
                 # Redirect to add_xls view upon successful login
-                return redirect('add_xls')
+                return redirect('messages')
             else:
                 messages.error(request, "Fehler bei der Anmeldung. Versuche es erneut.")
                 # Render login page with error message
@@ -311,3 +311,6 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect('planer_view')
+
+def messages(request):
+    return redirect('messages')

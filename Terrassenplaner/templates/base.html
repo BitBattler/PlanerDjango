@@ -11,7 +11,9 @@
     {% block extra_css %}{% endblock %}
   </head>
   <body>
+    
     {% include 'Terrassenplaner/navbar.html'%}
+  
     <header class="custom-header">
       <h1 class="header-title">
         
@@ -30,18 +32,12 @@
         {% block title_login %} 
         {% endblock %}
       </h1>
-
     </header>
     
     <div class="container_body">
+      
       {% block content %}
-      {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+      
 
       {% endblock %}
     </div>
