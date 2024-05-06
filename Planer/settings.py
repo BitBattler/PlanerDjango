@@ -19,7 +19,7 @@ MEDIA_URL = '/Planer/media/'
 SECRET_KEY = 'django-insecure-t8pc16-t!zterq7qozjbjrv&wjh7lz=%9w@7bcz26#_^n8jty0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['planer4-e93a8s4x.b4a.run','node85a.containers.back4app.com', 'localhost', '127.0.0.1']
 

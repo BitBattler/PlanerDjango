@@ -36,18 +36,20 @@ def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unt
     gesamt_schrauben = 0
     gesamt_befestigungsclip = 0
     
+    # Querstreben berechnen
     achsmass_querstreben = Decimal('1.1')  # in Meter
     querstreben_pro_laenge = ceil(deck_laenge / achsmass_querstreben) + 2
     querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
     querstreben_gesamt = round(querstreben_einzel)
     
+    # Bohrschraube Pakete
     achsmass_querstreben = Decimal('1.1')  # in Meter
     querstreben_pro_laenge = ceil(deck_laenge / achsmass_querstreben) + 2
     querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
     querstreben_gesamt = round(querstreben_einzel)
     
     bohrschrauben_gesamt = ceil(querstreben_einzel / 2)
-    
+        
     return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, querstreben_gesamt, bohrschrauben_gesamt
 
 # Englischer Verband
@@ -145,7 +147,7 @@ def terrassen_planer_view(request):
                     
 
             verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
-            schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
+            schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Schraube')
             bohrschrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben silber 5 x 70').first()
             befestigungsclips = Material.objects.filter(material_kategorie__name='Clips', material_name__icontains='Befestigungsclip')
 
