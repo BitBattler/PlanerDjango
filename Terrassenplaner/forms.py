@@ -29,7 +29,7 @@ class TerrassenPlanerForm(forms.Form):
         choices=[
             ('', 'Keine Auswahl'),
             ('wilder_verband', 'Wild'),
-            ('wilder_verband_90°', 'Wild_90 gedreht'),
+            #('wilder_verband_90°', 'Wild_90 gedreht'),
             ('englischer_verband', 'Englisch'),
         ],
         label="Verlegemuster auswählen",

@@ -12,7 +12,7 @@ urlpatterns = [
     path('categorize/', views.finalize_xls, name='finalize_xls'),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
-    path('mesages/', views.messages, name='messages'),
+    path('messages/', views.messages, name='messages'),
     
 
 ]

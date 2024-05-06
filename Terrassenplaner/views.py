@@ -36,32 +36,19 @@ def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unt
     gesamt_schrauben = 0
     gesamt_befestigungsclip = 0
     
-    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
-
-def calculate_material_requirements_wilder_verband_gedreht(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
+    achsmass_querstreben = Decimal('1.1')  # in Meter
+    querstreben_pro_laenge = ceil(deck_laenge / achsmass_querstreben) + 2
+    querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
+    querstreben_gesamt = round(querstreben_einzel)
     
-    # Berechnungen für die Unterkonstruktion für Wilden Verband
-    deck_laenge, deck_breite = deck_breite, deck_laenge
-    balkenlaenge = unterkonstruktion.material_laenge
-    balken_abstand = Decimal('0.4')  # in Meter
-    gesamt_balken = ceil(deck_breite / balken_abstand) + 2 
-    gesamt_lfm = gesamt_balken * deck_laenge
-    ben_balken_gesamt = ceil(gesamt_lfm / balkenlaenge)
-    balken_pro_reihe = ceil(deck_laenge / balkenlaenge)
-    deck_flaeche = deck_laenge * deck_breite
-
-    verbinder_pro_reihe = balken_pro_reihe - 1 if balken_pro_reihe > 1 else 0
-    gesamt_verbinder = verbinder_pro_reihe * gesamt_balken
-
-    terrassenbelag_breite = terrassenbelag.material_breite + Decimal('0.007') # Fugenabstand Clip 7mm
-    anzahl_dielen_breite = (deck_breite / terrassenbelag_breite)
-    anzahl_dielen_lfm = anzahl_dielen_breite * deck_laenge
-    anzahl_dielen_stk = ceil(anzahl_dielen_lfm / terrassenbelag.material_laenge)
-    gesamt_schrauben = 0
-    gesamt_befestigungsclip = 0
-    print("ben_balken_gesamt:", ben_balken_gesamt) 
-    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
+    achsmass_querstreben = Decimal('1.1')  # in Meter
+    querstreben_pro_laenge = ceil(deck_laenge / achsmass_querstreben) + 2
+    querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
+    querstreben_gesamt = round(querstreben_einzel)
     
+    bohrschrauben_gesamt = ceil(querstreben_einzel / 2)
+    
+    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, querstreben_gesamt, bohrschrauben_gesamt
 
 # Englischer Verband
 def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
@@ -85,23 +72,11 @@ def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite,
     anzahl_dielen_lfm = anzahl_dielen_breite * deck_laenge
     anzahl_dielen_stk = ceil(anzahl_dielen_lfm / terrassenbelag.material_laenge)
     
-    # Mehr Material hinzufügen (10-15%) für Englisch Verband
-    ben_balken_gesamt = ceil(ben_balken_gesamt * Decimal('1.15'))  # 15% mehr Balken für Englisch
-    anzahl_dielen_stk = ceil(anzahl_dielen_stk * Decimal('1.15'))  # 15% mehr Dielen für Englisch
-    
-    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
-    
-# Querverbinder 
-def calculate_querverbinder(deck_laenge, ben_balken_gesamt):
     achsmass_querstreben = Decimal('1.1')  # in Meter
     querstreben_pro_laenge = ceil(deck_laenge / achsmass_querstreben) + 2
     querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
     querstreben_gesamt = round(querstreben_einzel)
     
-    return querstreben_gesamt
-    
-# Bohrschrauben
-def calculate_bohrschrauben(deck_laenge, ben_balken_gesamt):
     achsmass_querstreben = Decimal('1.1')  # in Meter
     querstreben_pro_laenge = ceil(deck_laenge / achsmass_querstreben) + 2
     querstreben_einzel = querstreben_pro_laenge * ben_balken_gesamt / 4
@@ -109,20 +84,20 @@ def calculate_bohrschrauben(deck_laenge, ben_balken_gesamt):
     
     bohrschrauben_gesamt = ceil(querstreben_einzel / 2)
     
-    return bohrschrauben_gesamt
+    # Mehr Material hinzufügen (10-15%) für Englisch Verband
+    ben_balken_gesamt = ceil(ben_balken_gesamt * Decimal('1.15'))  # 15% mehr Balken für Englisch
+    anzahl_dielen_stk = ceil(anzahl_dielen_stk * Decimal('1.15'))  # 15% mehr Dielen für Englisch
+    
+    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, querstreben_gesamt, bohrschrauben_gesamt
+    
+    
 
 # Terrassen Planer View
 def terrassen_planer_view(request):
     if request.method == 'POST':
         form = TerrassenPlanerForm(request.POST)
         if form.is_valid():
-            ben_balken_gesamt = 0
-            anzahl_dielen_stk = 0
-            gesamt_schrauben = 0
-            gesamt_befestigungsclip = 0
-            gesamt_verbinder = 0
-            
-            
+                
             deck_laenge_mm = form.cleaned_data['deck_laenge']  # Angenommen, die Eingabe ist bereits in Millimeter
             deck_breite_mm = form.cleaned_data['deck_breite']  # Angenommen, die Eingabe ist bereits in Millimeter
             
@@ -140,10 +115,16 @@ def terrassen_planer_view(request):
             querstreben_gesamt = 0  
             bohrschrauben_gesamt = 0 
             befestigungsclip = 0
+            ben_balken_gesamt = 0  
+            anzahl_dielen_stk = 0
+            gesamt_schrauben = 0
+            gesamt_befestigungsclip = 0
+            gesamt_verbinder = 0
+            
 
             # Verlegemuster berechnung
             if verlegemuster == 'wilder_verband':
-                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
+                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, querstreben_gesamt, bohrschrauben_gesamt = calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
                 
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
@@ -151,36 +132,9 @@ def terrassen_planer_view(request):
                 else:
                     gesamt_befestigungsclip = 0
                     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
-                    
-                if querverbinder == 'ja':
-                    querstreben_gesamt = calculate_querverbinder(deck_laenge, ben_balken_gesamt)
-                    bohrschrauben_gesamt = calculate_bohrschrauben(deck_laenge, ben_balken_gesamt)
-                else:
-                    querstreben_gesamt = 0
-                    querstreben_einzel = 0 
-                    bohrschrauben_gesamt = 0
-                    
-            elif verlegemuster == 'wilder_verband_90° ':
-                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_wilder_verband_gedreht(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
-                
-                if montageauswahl == 'clips':
-                    gesamt_schrauben = 0
-                    gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
-                else:
-                    gesamt_befestigungsclip = 0
-                    gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
-                    
-                # Querverbinder If Abfrage
-                if querverbinder == 'ja':
-                    querstreben_gesamt = calculate_querverbinder(deck_laenge, ben_balken_gesamt)
-                    bohrschrauben_gesamt = calculate_bohrschrauben(deck_laenge, ben_balken_gesamt)
-                else:
-                    querstreben_gesamt = 0
-                    querstreben_einzel = 0 
-                    bohrschrauben_gesamt = 0        
-            
+                        
             elif verlegemuster == 'englischer_verband':
-                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
+                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, querstreben_gesamt, bohrschrauben_gesamt = calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
                 
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
@@ -189,18 +143,10 @@ def terrassen_planer_view(request):
                     gesamt_befestigungsclip = 0
                     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
                     
-                # Querverbinder If Abfrage
-                if querverbinder == 'ja':
-                    querstreben_gesamt = calculate_querverbinder(deck_laenge, ben_balken_gesamt)
-                    bohrschrauben_gesamt = calculate_bohrschrauben(deck_laenge, ben_balken_gesamt)
-                else:
-                    querstreben_gesamt = 0
-                    querstreben_einzel = 0 
-                    bohrschrauben_gesamt = 0
 
             verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
             schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
-            bohrschrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben').first()
+            bohrschrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben silber 5 x 70').first()
             befestigungsclips = Material.objects.filter(material_kategorie__name='Clips', material_name__icontains='Befestigungsclip')
 
             context = {
@@ -343,21 +289,21 @@ def login_user(request):
             
             if user is not None:
                 login(request, user)
-                messages.success(request, "Du bist angemeldet.")
+                #messages.success(request, "Du bist angemeldet.")
                 # Redirect to add_xls view upon successful login
-                return redirect('messages')
+                return redirect('/')
             else:
-                messages.error(request, "Fehler bei der Anmeldung. Versuche es erneut.")
+                #messages.error(request, "Fehler bei der Anmeldung. Versuche es erneut.")
                 # Render login page with error message
                 return render(request, 'login', {"form": form})
         else:
-            messages.error(request, "Fehler die Seite ist nicht verfügbar.")
+            #messages.error(request, "Fehler die Seite ist nicht verfügbar.")
             return render(request, 'Terrassenplaner/planer_form.html', {})
     
     else:
         # Render login page for GET request
         return render(request, 'Terrassenplaner/login.html', {})
-#Logout
+
 def logout_user(request):
     logout(request)
     return redirect('planer_view')
