@@ -33,10 +33,9 @@ def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unt
     anzahl_dielen_breite = (deck_breite / terrassenbelag_breite)
     anzahl_dielen_lfm = anzahl_dielen_breite * deck_laenge
     anzahl_dielen_stk = ceil(anzahl_dielen_lfm / terrassenbelag.material_laenge)
-    gesamt_schrauben = 0
     gesamt_befestigungsclip = 0
     
-    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
+    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_befestigungsclip
 
 # Englischer Verband
 def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
@@ -49,7 +48,6 @@ def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite,
     ben_balken_gesamt = ceil(gesamt_lfm / balkenlaenge)
     balken_pro_reihe = ceil(deck_laenge / balkenlaenge)
     deck_flaeche = deck_laenge * deck_breite
-    gesamt_schrauben = 0
     gesamt_befestigungsclip = 0
 
     verbinder_pro_reihe = balken_pro_reihe - 1 if balken_pro_reihe > 1 else 0
@@ -64,7 +62,7 @@ def calculate_material_requirements_englischer_verband(deck_laenge, deck_breite,
     ben_balken_gesamt = ceil(ben_balken_gesamt * Decimal('1.15'))  # 15% mehr Balken für Englisch
     anzahl_dielen_stk = ceil(anzahl_dielen_stk * Decimal('1.15'))  # 15% mehr Dielen für Englisch
     
-    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
+    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_befestigungsclip
     
 # Querverbinder 
 def calculate_querverbinder(deck_laenge, ben_balken_gesamt):
@@ -111,7 +109,7 @@ def terrassen_planer_view(request):
 
             # Verlegemuster berechnung
             if verlegemuster == 'wilder_verband':
-                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
+                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_befestigungsclip = calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
                 
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
@@ -130,7 +128,7 @@ def terrassen_planer_view(request):
                     bohrschrauben_gesamt = 0
             
             elif verlegemuster == 'englischer_verband':
-                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
+                ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_befestigungsclip = calculate_material_requirements_englischer_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
                 
                 if montageauswahl == 'clips':
                     gesamt_schrauben = 0
@@ -240,7 +238,7 @@ def add_xls(request):
         form = UploadXLSForm()
     return render(request, 'Terrassenplaner/add_xls.html', {'form': form})
 
-#xlsx downloader 
+#xlsx Downloader 
 def finalize_xls(request):
     if request.method == 'POST':
         temp_dir = settings.CUSTOM_TEMP_DIR
@@ -283,6 +281,7 @@ def material_list(request):
     kategorien = Kategorie.objects.all().prefetch_related('materialien')
     return render(request, 'Terrassenplaner/material_list.html', {'kategorien': kategorien})
 
+# Login / Logout
 def login_user(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -307,7 +306,6 @@ def login_user(request):
     else:
         # Render login page for GET request
         return render(request, 'Terrassenplaner/login.html', {})
-#Logout
 def logout_user(request):
     logout(request)
     return redirect('planer_view')
