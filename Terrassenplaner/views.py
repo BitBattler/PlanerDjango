@@ -198,7 +198,7 @@ def add_xls(request):
                 df_uploaded = df_uploaded[~df_uploaded['Beschreibung'].str.contains(term, case=False, na=False)]
                 df_uploaded = df_uploaded[~df_uploaded['Beschreibung 2'].str.contains(term, case=False, na=False)]
 
-            mask_path = os.path.join(settings.STATIC_ROOT, 'Mask_Material.xlsx')
+            mask_path = os.path.join(settings.STATIC_ROOT, 'xls/Mask_Material.xlsx')
             df_mask = pd.read_excel(mask_path)
 
             column_mapping = {

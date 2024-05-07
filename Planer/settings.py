@@ -142,6 +142,7 @@ STATICFILES_DIRS = [
     # Hier könntest du weitere Verzeichnisse hinzufügen
 ]
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
