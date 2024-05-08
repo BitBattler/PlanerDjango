@@ -97,19 +97,19 @@
             </tr>
             {% endfor %}
             {% endif %}
-            {% if gesamt_schrauben > 0 %}
+            {% if schrauben > 0 %}
             {% for schraube in schrauben %}
             <tr>
-              <td>{{ gesamt_schrauben }} Stk.</td>
+              <td>{{ schrauben }} Stk.</td>
               <td>{{ schraube.artikelnummer }}</td>
               <td>{{ schraube.material_name }}</td>
             </tr>
             {% endfor %}
             {% endif %}
-            {% if gesamt_befestigungsclip > 0 %}
+            {% if clip > 0 %}
             {% for clip in befestigungsclips %}
             <tr>
-              <td>{{ gesamt_befestigungsclip }} Stk.</td>
+              <td>{{ clip }} Stk.</td>
               <td>{{ clip.artikelnummer }}</td>
               <td>{{ clip.material_name }}</td>
             </tr>
