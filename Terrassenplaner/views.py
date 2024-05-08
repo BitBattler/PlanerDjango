@@ -14,6 +14,38 @@ from decimal import Decimal
 from django.contrib import messages
 from django.http import HttpResponse
 
+
+# Vorlage Funktion 
+def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
+    
+    # Unterkonstruktion 
+    balken_achsmass = Decimal("0.4")
+    balken_stk_breite = Decimal(deck_breite / balken_achsmass ) + 2
+    balken_lfm = (balken_stk_breite * deck_laenge)
+    ben_balken_gesamt = ceil(balken_lfm / ( unterkonstruktion.material_laenge / 1000))
+    
+    #print ("UK Länge:",unterkonstruktion.material_laenge, "Balken gesamt:",ben_balken_gesamt, "Balken Stk. Breite:",balken_stk_breite, "Balken Laufmeter:",balken_lfm)
+    
+    # Terrassenbelag
+    anzahl_dielen_stk = 0
+    
+    # Verbinder
+    gesamt_verbinder = 0
+    
+    # Schrauben
+    gesamt_schrauben = 0
+    #befestigungsclip = 0
+    gesamt_befestigungsclip = 0
+    
+    # Querstreben
+    #querstreben_einzel = 0
+    #querstreben_gesamt = 0  
+    #bohrschrauben_gesamt = 0
+     
+    
+    
+    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
+
 # Wilder Verband
 def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
     
@@ -144,6 +176,9 @@ def terrassen_planer_view(request):
                     querstreben_gesamt = 0
                     querstreben_einzel = 0 
                     bohrschrauben_gesamt = 0
+                    
+            elif verlegemuster == 'neutral':
+                    ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_neutral(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)    
 
             verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
             schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')

@@ -28,6 +28,7 @@ class TerrassenPlanerForm(forms.Form):
     verlegemuster = forms.ChoiceField(
         choices=[
             ('', 'Keine Auswahl'),
+            ('neutral', 'Neutral'),
             ('wilder_verband', 'Wild'),
             ('englischer_verband', 'Englisch'),
         ],
