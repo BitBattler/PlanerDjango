@@ -27,24 +27,45 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     #print ("UK Länge:",unterkonstruktion.material_laenge, "Balken gesamt:",ben_balken_gesamt, "Balken Stk. Breite:",balken_stk_breite, "Balken Laufmeter:",balken_lfm)
     
     # Terrassenbelag
-    anzahl_dielen_stk = 0
+    dielen_breite = terrassenbelag.material_breite + Decimal('7')
+    anzahl_dielen_breite = (deck_laenge / terrassenbelag.material_breite) * 1000
+    anzahl_dielen_lfm = ceil(anzahl_dielen_breite * deck_laenge)
+    anzahl_dielen = ceil((anzahl_dielen_lfm / terrassenbelag.material_laenge) * 1000)
     
-    # Verbinder
-    gesamt_verbinder = 0
-    
-    # Schrauben
-    gesamt_schrauben = 0
-    #befestigungsclip = 0
-    gesamt_befestigungsclip = 0
+    #print ("Anzahl Dielen Gesamt", anzahl_dielen)
     
     # Querstreben
-    #querstreben_einzel = 0
-    #querstreben_gesamt = 0  
-    #bohrschrauben_gesamt = 0
+    querstreben_sprung = 1.1 
+    querstreben_gesamt = ceil(float(balken_lfm) / querstreben_sprung)
+    querstreben_stk = ceil((querstreben_gesamt * balken_achsmass) / ( unterkonstruktion.material_laenge / 1000))
+    
+    #print ("Querstreben STK", querstreben_stk)
+    
+    
+    # Verbinder
+    verbinder_pro_reihe = ceil(balken_lfm / ( unterkonstruktion.material_laenge / 1000)) - 1 
+    verbinder_querstreben = querstreben_gesamt / 4
+    gesamt_verbinder = ceil(verbinder_pro_reihe + verbinder_querstreben)
+    bohrschrauben = ceil(verbinder_querstreben / 2 )
+    #print ("Verbinder", gesamt_verbinder)
+    
+    # Schrauben
+    gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
+    gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
+        
+    #print ("gesamt_befestigungclip", gesamt_befestigungsclip, "gesamt_schrauben", gesamt_schrauben)
      
     
-    
-    return ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
+    #print (
+    #    "Anzahl Dielen :",anzahl_dielen, 
+    #    "Verbinder Gesamt:",gesamt_verbinder, 
+    #    "Gesamt Schrauben",gesamt_schrauben, 
+    #    "Gesamt Befestigungsclip:",gesamt_befestigungsclip,
+    #    "Dielen LFM: ", anzahl_dielen_lfm,
+    #    "Anzahl Dielen Breite: ", anzahl_dielen_breite,   
+    #    )
+
+    return ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
 
 # Wilder Verband
 def calculate_material_requirements_wilder_verband(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag):
@@ -178,7 +199,7 @@ def terrassen_planer_view(request):
                     bohrschrauben_gesamt = 0
                     
             elif verlegemuster == 'neutral':
-                    ben_balken_gesamt, anzahl_dielen_stk, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_neutral(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)    
+                    ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_neutral(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)    
 
             verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
             schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
@@ -193,7 +214,7 @@ def terrassen_planer_view(request):
                 'ben_balken_gesamt': ben_balken_gesamt,
                 'unterkonstruktion': unterkonstruktion,
                 'terrassenbelag': terrassenbelag,
-                'anzahl_dielen_stk': anzahl_dielen_stk,
+                'anzahl_dielen': anzahl_dielen,
                 'schrauben': schrauben,
                 'bohrschrauben': bohrschrauben,
                 'bohrschrauben_gesamt': bohrschrauben_gesamt,
