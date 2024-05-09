@@ -13,6 +13,7 @@
               <label for="{{ form.deck_laenge.id_for_label }}"
                 >Länge (in mm)</label
               >
+              <label for="{{ form.deck_laenge.id_for_label }}">Länge (in mm)</label>
               {{ form.deck_laenge|add_class:"form-control" }}
             </div>
           </div>
@@ -21,6 +22,7 @@
               <label for="{{ form.deck_breite.id_for_label }}"
                 >Breite (in mm)</label
               >
+              <label for="{{ form.deck_breite.id_for_label }}">Breite (in mm)</label>
               {{ form.deck_breite|add_class:"form-control" }}
             </div>
           </div>
@@ -31,40 +33,28 @@
               <label for="{{ form.verlegemuster.id_for_label }}"
                 >Verlegemuster</label
               >
+              <label for="{{ form.verlegemuster.id_for_label }}">Verlegemuster</label>
               {{ form.verlegemuster|add_class:"form-control" }}
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="{{ form.montageauswahl.id_for_label }}"
-                >Verschraubung</label
-              >
-              {{ form.montageauswahl|add_class:"form-control" }}
-            </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.stellfuss.id_for_label }}"
+              >Stellfuß hinzufügen?</label
+            >
+            <label for="{{ form.stellfuss.id_for_label }}">Stellfuß hinzufügen?</label>
+            {{ form.stellfuss|add_class:"form-control" }}
           </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="{{ form.querverbinder.id_for_label }}"
-                >Querverbinder</label
-              >
-              {{ form.querverbinder|add_class:"form-control" }}
-            </div>
-          </div>
-        </div>
+        </div>  
+      </div>
         <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="{{ form.stellfuss.id_for_label }}"
-                >Stellfuß hinzufügen?</label
-              >
-              {{ form.stellfuss|add_class:"form-control" }}
-            </div>
-          </div>
           <div class="col-md-6">
             <div class="form-group">
               <label for="{{ form.unterkonstruktion.id_for_label }}"
                 >Unterkonstruktion auswählen</label
               >
+              <label for="{{ form.unterkonstruktion.id_for_label }}">Unterkonstruktion auswählen</label>
               {{ form.unterkonstruktion|add_class:"form-control" }}
             </div>
           </div>
@@ -75,6 +65,7 @@
               <label for="{{ form.terrassenbelag.id_for_label }}"
                 >Terrassenbelag auswählen</label
               >
+              <label for="{{ form.terrassenbelag.id_for_label }}">Terrassenbelag auswählen</label>
               {{ form.terrassenbelag|add_class:"form-control" }}
             </div>
           </div>

@@ -23,6 +23,7 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     balken_lfm = (balken_stk_breite * deck_laenge)
     ben_balken_gesamt = ceil(balken_lfm / ( unterkonstruktion.material_laenge / 1000))
     
+    ## Debug ##
     #print ("UK Länge:",unterkonstruktion.material_laenge, "Balken gesamt:",ben_balken_gesamt, "Balken Stk. Breite:",balken_stk_breite, "Balken Laufmeter:",balken_lfm)
     
     # Terrassenbelag
@@ -31,6 +32,7 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     anzahl_dielen_lfm = ceil(anzahl_dielen_breite * deck_laenge)
     anzahl_dielen = ceil((anzahl_dielen_lfm / terrassenbelag.material_laenge) * 1000)
     
+    ## Debug ##
     #print ("Anzahl Dielen Gesamt", anzahl_dielen)
     
     # Querstreben
@@ -38,6 +40,7 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     querstreben_gesamt = ceil(float(balken_lfm) / querstreben_sprung)
     querstreben_stk = ceil((querstreben_gesamt * balken_achsmass) / ( unterkonstruktion.material_laenge / 1000))
     
+    ## Debug ##
     #print ("Querstreben STK", querstreben_stk)
     
     
@@ -46,12 +49,15 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     verbinder_querstreben = querstreben_gesamt / 4
     gesamt_verbinder = ceil(verbinder_pro_reihe)
     bohrschrauben = ceil(verbinder_querstreben / 2 )
+    
+    ## Debug ##
     #print ("Verbinder", gesamt_verbinder)
     
     # Schrauben
     gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
-        
+    
+    ## Debug ##    
     #print ("Befestigunsgclip", gesamt_befestigungsclip, "Schrauben", gesamt_schrauben, "Bohrschrauben", bohrschrauben)
 
     return ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, bohrschrauben, querstreben_stk
@@ -86,17 +92,15 @@ def terrassen_planer_view(request):
                 pass
             
 
-            # Filter    
+            # Material-Filter    
             verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
             schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
-            #bohrschrauben_list = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben'); context['bohrschrauben_list'] = bohrschrauben_list            
-            befestigungsclips = Material.objects.filter(material_kategorie__name='Clips', material_name__icontains='Befestigungsclip')
-
+            befestigungsclips = Material.objects.filter(material_kategorie__name='Clips').exclude(material_name__icontains='Anfang-Endclip')
             bohrschrauben_list = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben silber 5 x 70 mm') 
             
-            
-            print (bohrschrauben_list)
-            print ("Bohrschrauben:", bohrschrauben)
+            ## Debug ##
+            #print (bohrschrauben_list)
+            print ("Befestigungsclip:", gesamt_befestigungsclip)
 
             context = {
                 'form': form,
