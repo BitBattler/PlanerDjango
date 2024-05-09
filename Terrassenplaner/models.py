@@ -24,4 +24,3 @@ class Material(models.Model):
         verbose_name_plural = 'Materialien'
         ordering = ['material_name']
 
-    
