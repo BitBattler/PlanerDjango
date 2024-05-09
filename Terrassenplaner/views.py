@@ -44,7 +44,7 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     # Verbinder
     verbinder_pro_reihe = ceil(balken_lfm / ( unterkonstruktion.material_laenge / 1000)) - 1 
     verbinder_querstreben = querstreben_gesamt / 4
-    gesamt_verbinder = ceil(verbinder_pro_reihe + verbinder_querstreben)
+    gesamt_verbinder = ceil(verbinder_pro_reihe)
     bohrschrauben = ceil(verbinder_querstreben / 2 )
     #print ("Verbinder", gesamt_verbinder)
     
@@ -52,12 +52,14 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     gesamt_befestigungsclip = ceil(deck_laenge * deck_breite * 17)
     gesamt_schrauben = ceil(deck_laenge * deck_breite * 17 * 2)
         
-    #print ("Befestigunsgclip", gesamt_befestigungsclip, "gesamt_schrauben", gesamt_schrauben)
+    #print ("Befestigunsgclip", gesamt_befestigungsclip, "Schrauben", gesamt_schrauben, "Bohrschrauben", bohrschrauben)
 
-    return ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip
+    return ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, bohrschrauben, querstreben_stk
 
 # Terrassen Planer View
 def terrassen_planer_view(request):
+    context = {} 
+    
     if request.method == 'POST':
         form = TerrassenPlanerForm(request.POST)
         if form.is_valid():
@@ -74,28 +76,12 @@ def terrassen_planer_view(request):
             querverbinder = form.cleaned_data['querverbinder']
             montageauswahl = form.cleaned_data['montageauswahl']
             
-            querstreben_einzel = 0
-            querstreben_gesamt = 0  
-            bohrschrauben_gesamt = 0 
-            clip = 0
+        
 
             # Verlegemuster berechnung
             if verlegemuster == 'neutral':
-                ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip = calculate_material_requirements_neutral(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
+                ben_balken_gesamt, anzahl_dielen, gesamt_verbinder, gesamt_schrauben, gesamt_befestigungsclip, bohrschrauben, querstreben_stk = calculate_material_requirements_neutral(deck_laenge, deck_breite, unterkonstruktion, terrassenbelag)
                 
-                if montageauswahl == 'clips':
-                    gesamt_clip = gesamt_befestigungsclip
-                else:
-                    schrauben = gesamt_schrauben
-                    
-                # Querverbinder If Abfrage
-                if querverbinder == 'ja':
-                    pass
-                else:
-                    pass
-            
-            
-        
             else: 
                 pass
             
@@ -103,8 +89,14 @@ def terrassen_planer_view(request):
             # Filter    
             verbinder = Material.objects.filter(material_kategorie__name='Zubehoer', material_name__icontains='Verbinder')
             schrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Schraube').exclude(material_name__icontains='Bohrschraube')
-            bohrschrauben = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben').first()
+            #bohrschrauben_list = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben'); context['bohrschrauben_list'] = bohrschrauben_list            
             befestigungsclips = Material.objects.filter(material_kategorie__name='Clips', material_name__icontains='Befestigungsclip')
+
+            bohrschrauben_list = Material.objects.filter(material_kategorie__name='Schrauben', material_name__icontains='Bohrschrauben silber 5 x 70 mm') 
+            
+            
+            print (bohrschrauben_list)
+            print ("Bohrschrauben:", bohrschrauben)
 
             context = {
                 'form': form,
@@ -115,18 +107,17 @@ def terrassen_planer_view(request):
                 'unterkonstruktion': unterkonstruktion,
                 'terrassenbelag': terrassenbelag,
                 'anzahl_dielen': anzahl_dielen,
-                'schrauben': schrauben,
-                'bohrschrauben': bohrschrauben,
-                'bohrschrauben_gesamt': bohrschrauben_gesamt,
+                'gesamt_schrauben': gesamt_schrauben,
                 'schrauben': schrauben,
                 'montageauswahl': montageauswahl,
                 'befestigungsclips': befestigungsclips,
-                'clip': clip, 
+                'gesamt_befestigungsclip': gesamt_befestigungsclip, 
                 'verbinder': verbinder,
                 'gesamt_verbinder': gesamt_verbinder,
                 'querverbinder': querverbinder,
-                'querstreben_einzel': querstreben_einzel,
-                'querstreben_gesamt': querstreben_gesamt
+                'bohrschrauben' : bohrschrauben,
+                'bohrschrauben_list' : bohrschrauben_list,
+                'querstreben_stk' : querstreben_stk,
             }
             return render(request, 'Terrassenplaner/ergebnis.html', context)
     else:

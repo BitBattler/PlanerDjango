@@ -46,6 +46,52 @@
               <td>{{ unterkonstruktion.artikelnummer }}</td>
               <td>{{ unterkonstruktion.material_name }}</td>
             </tr>
+            {% if gesamt_verbinder > 0 %}
+            {% for verbinder in verbinder %}
+            <tr>
+              <td>{{ gesamt_verbinder }} Stk.</td>
+              <td>{{ verbinder.artikelnummer }}</td>
+              <td>{{ verbinder.material_name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Querverbinder</h2>
+        <table class="table table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>Anzahl</th>
+              <th>Artikelnummer</th>
+              <th>Material Name</th>
+            </tr>
+          </thead>
+            <tbody>
+            {% if querstreben_stk > 0 %}
+            {% for verbinder in verbinder %}
+            <tr>
+              <td>{{ querstreben_stk }} Stk.</td>
+              <td>{{ verbinder.artikelnummer }}</td>
+              <td>Verbinder für Querstreben</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if bohrschrauben > 0 %}
+                <tr>
+                  <td>{{ bohrschrauben }} Stk.</td> <!-- Anzahl der Bohrschrauben -->
+                  <td>{% if bohrschrauben_list.0.artikelnummer %}{{ bohrschrauben_list.0.artikelnummer }}{% endif %}</td>
+                  <td>{% if bohrschrauben_list.0.material_name %}{{ bohrschrauben_list.0.material_name }}{% endif %}</td>
+                </tr>
+                {% for schrauben in bohrschrauben_list|slice:"1:" %} <!-- Details für jede weitere Bohrschraube -->
+                    <tr>
+                      <td></td>
+                      <td>{% if schrauben.artikelnummer %}{{ schrauben.artikelnummer }}{% endif %}</td>
+                      <td>{% if schrauben.material_name %}{{ schrauben.material_name }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
           </tbody>
         </table>
       </section>
@@ -78,15 +124,8 @@
               <th>Material Name</th>
             </tr>
           </thead>
-          <tbody>
-            {% if gesamt_verbinder > 0 %}
-            {% for verbinder in verbinder %}
-            <tr>
-              <td>{{ gesamt_verbinder }} Stk.</td>
-              <td>{{ verbinder.artikelnummer }}</td>
-              <td>{{ verbinder.material_name }}</td>
-            </tr>
-            {% endfor %}
+            <tbody>
+
             {% endif %}
             {% if querstreben_gesamt > 0 %}
             {% for verbinder in verbinder %}
@@ -97,31 +136,25 @@
             </tr>
             {% endfor %}
             {% endif %}
-            {% if schrauben > 0 %}
+            {% if gesamt_schrauben > 0 %}
             {% for schraube in schrauben %}
             <tr>
-              <td>{{ schrauben }} Stk.</td>
+              <td>{{ gesamt_schrauben }} Stk.</td>
               <td>{{ schraube.artikelnummer }}</td>
               <td>{{ schraube.material_name }}</td>
             </tr>
             {% endfor %}
             {% endif %}
-            {% if clip > 0 %}
+            {% if befestigungsclips %}
             {% for clip in befestigungsclips %}
             <tr>
-              <td>{{ clip }} Stk.</td>
+              <td>{{ clip.anzahl }} Stk.</td>  <!-- Hier gehe ich davon aus, dass 'anzahl' ein Feld des Clip-Objekts ist -->
               <td>{{ clip.artikelnummer }}</td>
               <td>{{ clip.material_name }}</td>
             </tr>
             {% endfor %}
             {% endif %}
-            {% if bohrschrauben_gesamt > 0 %}
-            <tr>
-              <td>{{ bohrschrauben_gesamt }} Pak.</td>
-              <td>{{ bohrschrauben.artikelnummer }}</td>
-              <td>{{ bohrschrauben.material_name }}</td>
-            </tr>
-            {% endif %}
+            </tbody>
           </tbody>
         </table>
       </section>
