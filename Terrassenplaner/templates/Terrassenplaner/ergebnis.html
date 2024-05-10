@@ -29,6 +29,7 @@
               <th>Anzahl UK</th>
               <th>Artikelnummer</th>
               <th>Material Name</th>
+              <th>Länge</th>
             </tr>
           </thead>
           <tbody>
@@ -36,6 +37,7 @@
               <td>{{ ben_balken_gesamt }} Stk.</td>
               <td>{{ unterkonstruktion.artikelnummer }}</td>
               <td>{{ unterkonstruktion.material_name }}</td>
+              <td>{{ unterkonstruktion.material_laenge|floatformat:"-0" }} mm</td>
             </tr>
             {% if gesamt_verbinder > 0 %}
             {% for verbinder in verbinder %}
@@ -95,6 +97,8 @@
               <th>Anzahl Dielen</th>
               <th>Artikelnummer</th>
               <th>Material Name</th>
+              <th>Länge</th>
+              <th>Breite</th>
             </tr>
           </thead>
           <tbody>
@@ -102,6 +106,8 @@
               <td>{{ anzahl_dielen }} Stk.</td>
               <td>{{ terrassenbelag.artikelnummer }}</td>
               <td>{{ terrassenbelag.material_name }}</td>
+              <td>{{ terrassenbelag.material_laenge|floatformat:"-0" }} mm</td>
+              <td>{{ terrassenbelag.material_breite|floatformat:"-0" }} mm</td>
             </tr>
           </tbody>
         </table>

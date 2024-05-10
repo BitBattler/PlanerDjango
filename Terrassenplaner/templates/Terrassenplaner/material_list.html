@@ -29,9 +29,9 @@
                         <td></td> <!-- Leere Zelle für die Kategorieüberschrift -->
                         <td>{{ material.material_name }}</td>
                         <td>{{ material.artikelnummer }}</td>
-                        <td>{{ material.material_laenge|mul:1000|floatformat:"0" }}</td>
-                        <td>{{ material.material_breite|mul:1000|floatformat:"0" }}</td>
-                        <td>{{ material.material_hoehe|mul:1000|floatformat:"0" }}</td>
+                        <td>{{ material.material_laenge|floatformat:"0" }}</td>
+                        <td>{{ material.material_breite|floatformat:"0" }}</td>
+                        <td>{{ material.material_hoehe|floatformat:"0" }}</td>
                     </tr>
                 {% endfor %}
             {% endfor %}
