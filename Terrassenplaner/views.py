@@ -27,11 +27,11 @@ def calculate_material_requirements_neutral (deck_laenge, deck_breite, unterkons
     
     # Terrassenbelag
     dielen_breite = terrassenbelag.material_breite + Decimal('7')
-    anzahl_dielen_breite = (deck_laenge / terrassenbelag.material_breite) * 1000
+    anzahl_dielen_breite = (deck_laenge / dielen_breite) * 1000
     anzahl_dielen_lfm = ceil(anzahl_dielen_breite * deck_laenge)
-    anzahl_dielen = ceil((anzahl_dielen_lfm / terrassenbelag.material_laenge) * 1000)
+    anzahl_dielen = ceil((anzahl_dielen_lfm / (terrassenbelag.material_laenge - 100)) * 1000)
     
-    #print ("Anzahl Dielen Gesamt", anzahl_dielen)
+    #print ("anzahl_dielen_breite", anzahl_dielen_breite)
     
     # Querstreben
     querstreben_sprung = 1.1 

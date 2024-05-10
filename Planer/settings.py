@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-t8pc16-t!zterq7qozjbjrv&wjh7lz=%9w@7bcz26#_^n8jty0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'planer13-0z3yxpnc.b4a.run']
 
 
 # Application definition
@@ -155,10 +155,10 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
 }
 # Django CSRF-Schutz: CSRF_TRUSTED_ORIGINS
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://localhost', 'http://node84a.containers.back4app.com', 'https://planer12-zr3b2fj8.b4a.run']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://localhost', 'http://node84a.containers.back4app.com', 'https://planer13-0z3yxpnc.b4a.run']
 
 # CORS-Konfiguration: CORS_ALLOWED_ORIGINS
-CORS_ALLOWED_ORIGINS = ['http://127.0.0.1', 'http://localhost', 'http://node84a.containers.back4app.com', 'https://planer12-zr3b2fj8.b4a.run']
+CORS_ALLOWED_ORIGINS = ['http://127.0.0.1', 'http://localhost', 'http://node84a.containers.back4app.com', 'https://planer13-0z3yxpnc.b4a.run']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
