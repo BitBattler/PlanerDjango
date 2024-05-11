@@ -20,8 +20,6 @@ EXPOSE 800
 # Setzen Sie die Umgebungsvariable für Django
 ENV DJANGO_SETTINGS_MODULE=Planer.settings
 
-# Führen Sie den Befehl aus, um die statischen Dateien zu sammeln
-RUN python manage.py collectstatic --noinput
 
 # Starten Sie den Server beim Start des Containers
 CMD ["gunicorn", "Planer.wsgi:application", "--bind", "0.0.0.0:8000"]
