@@ -16,7 +16,9 @@ MEDIA_URL = '/Planer/media/'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t8pc16-t!zterq7qozjbjrv&wjh7lz=%9w@7bcz26#_^n8jty0'
+#SECRET_KEY = 'django-insecure-t8pc16-t!zterq7qozjbjrv&wjh7lz=%9w@7bcz26#_^n8jty0'
+with open(os.path.join(BASE_DIR, 'secret_key.txt')) as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
