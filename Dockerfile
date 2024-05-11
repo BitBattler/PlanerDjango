@@ -15,10 +15,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Mache den Port, auf dem die App läuft, nach außen sichtbar
-EXPOSE 8000
+EXPOSE 800
 
-# Definiere die Umgebungsvariablen (falls nötig)
+# Setzen Sie die Umgebungsvariable für Django
+ENV DJANGO_SETTINGS_MODULE=Planer.settings
 
+# Führen Sie den Befehl aus, um die statischen Dateien zu sammeln
+RUN python manage.py collectstatic --noinput
 
-# Führe die Anwendung aus
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Starten Sie den Server beim Start des Containers
+CMD ["gunicorn", "Planer.wsgi:application", "--bind", "0.0.0.0:8000"]
